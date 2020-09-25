@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "131637575689",
+    "firebase_url": "https://firestore-example-projec-4adcb.firebaseio.com",
+    "project_id": "firestore-example-projec-4adcb",
+    "storage_bucket": "firestore-example-projec-4adcb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131637575689:android:7c2d9f52c10c88ec9738d8",
+        "android_client_info": {
+          "package_name": "muhammadalighaffar.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131637575689-8c30dbaakbnj4t1qauqohn84spbdr5kh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD03nC6RS7zv8QkxbFT_W4eLFmpFvbfoIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "131637575689-8c30dbaakbnj4t1qauqohn84spbdr5kh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
