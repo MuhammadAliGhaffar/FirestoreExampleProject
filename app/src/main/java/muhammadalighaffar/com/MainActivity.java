@@ -25,53 +25,42 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText edtTitle,edtDescription;
+    private EditText edtID,edtName,edtProgram;
     private TextView text_view_data;
 
     //Creating final keys for cloud firestore
-    private static final String KEY_TITLE="title";
-    private static final String KEY_DESCRIPTION="description";
+    private static final String KEY_ID="id";
+    private static final String KEY_NAME="name";
+    private static final String KEY_PROGRAM="program";
 
     //Database Reference
+
     private FirebaseFirestore db=FirebaseFirestore.getInstance();
-    private DocumentReference noteRef = db.collection("Notebook").document("My first note");
-    CollectionReference mynote = db.collection("Notebook");
+    private DocumentReference students;
+    private CollectionReference readStudentData = db.collection("Student");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        edtTitle=findViewById(R.id.edtTitle);
-        edtDescription=findViewById(R.id.edtDescription);
+        edtID=findViewById(R.id.edtID);
+        edtName=findViewById(R.id.edtName);
+        edtProgram=findViewById(R.id.edtProgram);
         text_view_data=findViewById(R.id.text_view_data);
     }
-    public void saveNote(View view){
-        Map<String, Object> note = new HashMap<>();
-        note.put(KEY_TITLE,edtTitle.getText().toString());
-        note.put(KEY_DESCRIPTION,edtDescription.getText().toString());
-
-        db.collection("Notebook")
-                .add(note)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(MainActivity.this, "Note saved", Toast.LENGTH_SHORT).show();
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "Failed "+e.toString(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
 
 
 
+    public void addDetails(View view){
 
-        /*noteRef.set(note)
+        Map<String, Object> details = new HashMap<>();
+        details.put(KEY_ID,edtID.getText().toString());
+        details.put(KEY_NAME,edtName.getText().toString());
+        details.put(KEY_PROGRAM,edtProgram.getText().toString());
+
+        students = db.collection("Student").document(edtID.getText().toString());
+        students.set(details)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -83,53 +72,81 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(MainActivity.this, "Failed "+e.toString(), Toast.LENGTH_SHORT).show();
                     }
-                });*/
-
+                });
 
     }
     public void getRetrieveData(View view){
-        /*noteRef.get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists()){
-                            String title = documentSnapshot.getString(KEY_TITLE);
-                            String description =documentSnapshot.getString(KEY_DESCRIPTION);
-
-                            //Map<String,Object> note =documentSnapshot.getData();
-                            text_view_data.setText("Title :"+title+"\n"+"Description :"+description);
-
-                        }else{
-                            Toast.makeText(MainActivity.this, "Document does not exists", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "Error :"+e.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });*/
-                mynote
+                readStudentData
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            StringBuilder builder = new StringBuilder();
+
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.i("TAG", document.getId() + " => " + document.getData());
 
-                                String title = document.getString(KEY_TITLE);
-                                String description =document.getString(KEY_DESCRIPTION);
+                                String id = document.getString(KEY_ID);
+                                String name =document.getString(KEY_NAME);
+                                String program =document.getString(KEY_PROGRAM);
 
-                                text_view_data.append("Title :"+title+" Description :"+description +"\n");
+                                builder.append("Student ID :"+id +"\n"+
+                                                "Student Name :"+name +"\n"+
+                                                "Student Program :"+program+"\n\n");
 
                             }
+                            text_view_data.setText(builder.toString());
 
                         } else {
                             Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    public void updateData(View view){
+
+        Map<String, Object> details = new HashMap<>();
+        details.put(KEY_ID,edtID.getText().toString());
+        details.put(KEY_NAME,edtName.getText().toString());
+        details.put(KEY_PROGRAM,edtProgram.getText().toString());
+
+        db.collection("Student").document(edtID.getText().toString()).update(details)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(MainActivity.this, "Student details updated", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Failed "+e.toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+
+    }
+    public void deleteNote(View view){
+
+        db.collection("Student").document(edtID.getText().toString()).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(MainActivity.this, "Student details deleted", Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Failed "+e.toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+
     }
 }
