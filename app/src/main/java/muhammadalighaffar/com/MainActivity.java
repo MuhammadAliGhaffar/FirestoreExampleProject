@@ -50,7 +50,37 @@ public class MainActivity extends AppCompatActivity {
         text_view_data=findViewById(R.id.text_view_data);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        readStudentData
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            StringBuilder builder = new StringBuilder();
 
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.i("TAG", document.getId() + " => " + document.getData());
+
+                                String id = document.getString(KEY_ID);
+                                String name =document.getString(KEY_NAME);
+                                String program =document.getString(KEY_PROGRAM);
+
+                                builder.append("Student ID :"+id +"\n"+
+                                        "Student Name :"+name +"\n"+
+                                        "Student Program :"+program+"\n\n");
+
+                            }
+                            text_view_data.setText(builder.toString());
+
+                        } else {
+                            Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
     public void addDetails(View view){
 
